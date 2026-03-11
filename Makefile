@@ -38,19 +38,19 @@ LOCALES =
 # translation
 SOURCES = \
 	__init__.py \
-	guide_interactif_html.py guide_interactif_html_dialog.py
+	guide_interactif_html.py guide_interactif_html_dialog.py guide_launcher.py
 
 PLUGINNAME = guide_interactif_html
 
 PY_FILES = \
 	__init__.py \
-	guide_interactif_html.py guide_interactif_html_dialog.py
+	guide_interactif_html.py guide_interactif_html_dialog.py guide_launcher.py
 
 UI_FILES = guide_interactif_html_dialog_base.ui
 
 EXTRAS = metadata.txt icon.png
 
-EXTRA_DIRS =
+EXTRA_DIRS = web
 
 COMPILED_RESOURCE_FILES = resources.py
 

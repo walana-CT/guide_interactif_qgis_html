@@ -25,6 +25,7 @@ __copyright__ = (
 
 import logging
 from qgis.PyQt.QtCore import QObject, pyqtSlot, pyqtSignal
+from qgis.PyQt.QtWidgets import QWidget
 from qgis.core import QgsMapLayerRegistry
 from qgis.gui import QgsMapCanvasLayer
 LOGGER = logging.getLogger('QGIS')
@@ -187,7 +188,10 @@ class QgisInterface(QObject):
 
         In case of QGIS it returns an instance of QgisApp.
         """
-        pass
+        parent = self.canvas.parent()
+        if isinstance(parent, QWidget):
+            return parent
+        return QWidget()
 
     def addDockWidget(self, area, dock_widget):
         """Add a dock widget to the main window.
@@ -198,6 +202,18 @@ class QgisInterface(QObject):
         :param dock_widget: A dock widget to add to the UI.
         :type dock_widget: QDockWidget
         """
+        pass
+
+    def removeDockWidget(self, dock_widget):
+        """Remove a dock widget from the main window."""
+        pass
+
+    def addPluginToMenu(self, menu, action):
+        """Add an action to the plugin menu."""
+        pass
+
+    def removePluginMenu(self, menu, action):
+        """Remove an action from the plugin menu."""
         pass
 
     def legendInterface(self):

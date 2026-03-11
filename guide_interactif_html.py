@@ -21,15 +21,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
+import os.path
+
+from qgis.PyQt.QtCore import QCoreApplication, QSettings, Qt, QTranslator
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
-# Initialize Qt resources from file resources.py
+from .guide_launcher import GuideLauncherDockWidget
 from .resources import *
-# Import the code for the dialog
-from .guide_interactif_html_dialog import GuideInteractifHtmlDialog
-import os.path
 
 
 class GuideInteractifHtml:
@@ -43,11 +42,8 @@ class GuideInteractifHtml:
             application at run time.
         :type iface: QgsInterface
         """
-        # Save reference to the QGIS interface
         self.iface = iface
-        # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
-        # initialize locale
         locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(
             self.plugin_dir,
@@ -59,29 +55,14 @@ class GuideInteractifHtml:
             self.translator.load(locale_path)
             QCoreApplication.installTranslator(self.translator)
 
-        # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&GuideInteractifHtml')
-
-        # Check if plugin was started the first time in current QGIS session
-        # Must be set in initGui() to survive plugin reloads
+        self.dock_widget = None
         self.first_start = None
 
-    # noinspection PyMethodMayBeStatic
     def tr(self, message):
-        """Get the translation for a string using Qt translation API.
-
-        We implement this ourselves since we do not inherit QObject.
-
-        :param message: String for translation.
-        :type message: str, QString
-
-        :returns: Translated version of message.
-        :rtype: QString
-        """
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
+        """Get the translation for a string using Qt translation API."""
         return QCoreApplication.translate('GuideInteractifHtml', message)
-
 
     def add_action(
         self,
@@ -94,44 +75,7 @@ class GuideInteractifHtml:
         status_tip=None,
         whats_this=None,
         parent=None):
-        """Add a toolbar icon to the toolbar.
-
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.actions list.
-        :rtype: QAction
-        """
+        """Add a toolbar icon to the toolbar."""
 
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
@@ -145,16 +89,12 @@ class GuideInteractifHtml:
             action.setWhatsThis(whats_this)
 
         if add_to_toolbar:
-            # Adds plugin icon to Plugins toolbar
             self.iface.addToolBarIcon(action)
 
         if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+            self.iface.addPluginToMenu(self.menu, action)
 
         self.actions.append(action)
-
         return action
 
     def initGui(self):
@@ -163,38 +103,34 @@ class GuideInteractifHtml:
         icon_path = ':/plugins/guide_interactif_html/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u''),
+            text=self.tr(u'Ouvrir le lanceur de guides'),
             callback=self.run,
             parent=self.iface.mainWindow())
 
-        # will be set False in run()
         self.first_start = True
-
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
+        if self.dock_widget is not None and hasattr(self.iface, 'removeDockWidget'):
+            self.iface.removeDockWidget(self.dock_widget)
+            self.dock_widget = None
+
         for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(u'&GuideInteractifHtml'),
-                action)
+            self.iface.removePluginMenu(self.tr(u'&GuideInteractifHtml'), action)
             self.iface.removeToolBarIcon(action)
 
+    def _create_dock_widget(self):
+        self.dock_widget = GuideLauncherDockWidget(
+            self.plugin_dir,
+            self.iface.mainWindow(),
+        )
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget)
 
     def run(self):
-        """Run method that performs all the real work"""
-
-        # Create the dialog with elements (after translation) and keep reference
-        # Only create GUI ONCE in callback, so that it will only load when the plugin is started
-        if self.first_start == True:
+        """Open or focus the dock widget used to launch HTML guides."""
+        if self.first_start is True or self.dock_widget is None:
             self.first_start = False
-            self.dlg = GuideInteractifHtmlDialog()
+            self._create_dock_widget()
 
-        # show the dialog
-        self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            pass
+        self.dock_widget.show()
+        self.dock_widget.raise_()
