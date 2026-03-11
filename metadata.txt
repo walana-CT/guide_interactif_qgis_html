@@ -1,0 +1,47 @@
+# This file contains metadata for your plugin.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=GuideInteractifHtml
+qgisMinimumVersion=3.0
+description=guide interactif pour les utilisateurs ONF
+version=0.1
+author=Robin FICHT
+email=robin.ficht@onf.fr
+
+about=ce guide est la deuxième tentative de créer un guide interactif pour les utilisateurs de l'ONF. Il utilise des fichiers html plutot que de passer par le plug-in directement afin d'éviter le bloquage des fenetres dans QGIS
+
+tracker=http://bugs
+repository=http://repo
+# End of mandatory metadata
+
+# Recommended items:
+
+hasProcessingProvider=no
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=python, guide
+
+homepage=http://homepage
+category=Plugins
+icon=icon.png
+# experimental flag
+experimental=False
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+
+# Since QGIS 3.8, a comma separated list of plugins to be installed
+# (or upgraded) can be specified.
+# Check the documentation for more information.
+# plugin_dependencies=
+
+Category of the plugin: Raster, Vector, Database or Web
+# category=
+
+# If the plugin can run on QGIS Server.
+server=False
+

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/guide_interactif_html" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
