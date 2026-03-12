@@ -36,6 +36,7 @@ class GuideLauncherDockWidget(QDockWidget):
 
         description = QLabel(
             "Le guide va s'ouvrir dans votre navigateur WEB."
+            "si vous ne voyez pas le guide pensez à consulter la fenetre de votre naviagteur"
         )
         description.setWordWrap(True)
         layout.addWidget(description)
