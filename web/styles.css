@@ -199,6 +199,38 @@ ol {
   margin-bottom: 8px;
 }
 
+/* ── Video section ────────────────────────────────────── */
+
+.video-section {
+  margin-top: 26px;
+}
+
+.video-section h2 {
+  margin: 0 0 14px;
+}
+
+.video-wrapper {
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: var(--shadow);
+  line-height: 0;
+}
+
+.video-wrapper video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 560px;
+}
+
+.video-caption {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  color: rgba(23, 50, 77, 0.6);
+  text-align: center;
+}
+
 @media (max-width: 720px) {
   .guide-shell {
     width: min(100% - 24px, 1120px);
